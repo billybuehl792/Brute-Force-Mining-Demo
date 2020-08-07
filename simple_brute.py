@@ -2,25 +2,16 @@
 # simple_brute.py - iterate over keyspaces
 
 import hashlib
-import string
+from string import ascii_letters, digits
 
 
 class Brute:
 
-    def __init__(self, ks, n, maxLen):
+    def __init__(self, ks, f, maxLen):
         self.ks = ks
-        self.n = n
+        self.f = f
         self.maxLen = maxLen
         self.l = 1
-        self.counter = 0
-
-    def action(self, permutation):
-        # specify action for each nth permutation
-        if self.counter % n == 0:   
-            h = hashlib.md5(permutation.encode()).hexdigest()
-            print(f'Value: {permutation}, Hash: {str(h)}')
-
-        self.counter += 1
 
     def brutef(self, s='', r=1):
         # recursively iterate through each permutation of a keyspace to len(n)
@@ -31,7 +22,7 @@ class Brute:
                     if r < self.l:
                         self.brutef(permutation, r+1)
                     else:
-                        self.action(permutation)
+                        self.f(permutation)
                 self.l += 1
         else:
             for k in self.ks:
@@ -39,7 +30,7 @@ class Brute:
                 if r < self.l:
                     self.brutef(permutation, r+1)
                 else:
-                    self.action(permutation)
+                    self.f(permutation)
 
     @staticmethod
     def n_to_base10(ks, permutation):
@@ -72,20 +63,30 @@ class Brute:
         return result
 
 
+# specify action with each permutation
+def find_hash(permutation):
+    global hashlist
+
+    h = hashlib.md5(permutation.encode()).hexdigest()
+
+    if h in hashlist:
+        print(f'HASH MATCH! Permutation: {permutation}, Digest: {str(h)}')
+
 if __name__ == '__main__':
     # keyspaces
     ks1 = 'abc'
     ks2 = 'xyz123'
-    ks3 = string.ascii_letters
+    ks3 = ascii_letters + digits
 
     # maximum permutation length
-    max_length = 6
+    max_length = 5
 
-    # action every n
-    n = 1
+    # retrieve hash list
+    with open('hashes.txt', 'r') as f:
+        hashlist = [line.strip('\n') for line in f]
 
     # brute force key space
-    b = Brute(ks2, n, max_length)
+    b = Brute(ks3, find_hash, max_length)
     b.brutef()
 
     # convert between base10 and baseN
