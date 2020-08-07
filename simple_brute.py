@@ -88,6 +88,6 @@ if __name__ == '__main__':
     b = Brute(ks2, n, max_length)
     b.brutef()
 
-    # convert 
+    # convert between base10 and baseN
     print(f'Base10: 52, BaseN: {Brute.base10_to_n(ks3, 52)}')
     print(f'BaseN: aa, Base10: {Brute.n_to_base10(ks3, "aa")}')
